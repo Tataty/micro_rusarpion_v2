@@ -1,0 +1,75 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "BUILD: FPGA",
+            "type": "shell",
+            "command": "/home/rusa/FPGA/TANG25K/Gowin_V1.9.12.02_linux/IDE/bin/gw_sh",
+            "args": [
+                "build.tcl"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "options": {
+                "env": {
+                    "LM_LICENSE_FILE": "10559@gowinlic.sipeed.com",
+                    "LD_LIBRARY_PATH": "/home/rusa/FPGA/TANG25K/Gowin_V1.9.12.02_linux/IDE/lib/"
+                },
+                "cwd": "${workspaceFolder}/fpga"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "LOAD: SDRAM FPGA",
+            "type": "shell",
+            "command": "/home/rusa/FPGA/TANG25K/openFPGALoader/build/openFPGALoader",
+            "args": [
+                "-b",
+                "tangprimer25k",
+                "impl/pnr/micro_rusarpion_fpga.fs"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/fpga"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "LOAD: FLASH FPGA",
+            "type": "shell",
+            "command": "/home/rusa/FPGA/TANG25K/openFPGALoader/build/openFPGALoader",
+            "args": [
+                "-b",
+                "tangprimer25k",
+                "--unprotect-flash",
+                "-f",
+                "impl/pnr/micro_rusarpion_fpga.fs"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/fpga"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

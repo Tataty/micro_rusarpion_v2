@@ -1,0 +1,15 @@
+/* Built-in LEDs */
+IO_LOC "led_done" D7;
+IO_LOC "led_ready" E8;
+IO_PORT "led_done" PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_PORT "led_ready" PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+
+/* Built-in BUTTONs */
+IO_LOC "button_s1" H11;
+IO_LOC "button_s2" H10;
+IO_PORT "button_s1" PULL_MODE=DOWN DRIVE=OFF BANK_VCCIO=3.3;
+IO_PORT "button_s2" PULL_MODE=DOWN DRIVE=OFF BANK_VCCIO=3.3;
+
+/* CLOCK */
+IO_LOC "clk" E2;
+IO_PORT "clk" PULL_MODE=NONE DRIVE=OFF BANK_VCCIO=3.3;
