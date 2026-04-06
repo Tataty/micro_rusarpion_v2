@@ -9,6 +9,7 @@ add_file src/top.sv
 add_file src/rising_edge_detector.sv
 add_file src/debouncer.sv
 add_file src/sync.sv
+add_file src/uart_rx.sv
 
 # SRC CONSTRAINTS #
 add_file cst/physical.cst
