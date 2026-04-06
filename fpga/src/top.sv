@@ -13,39 +13,19 @@ module top (
     logic reset_n = 1'b1;
 
     /* UART1 9600 Hz */
-    logic [7:0] uart1_data = 0;
-    logic [7:0] uart1_data_count = 0;
+    logic [215:0] uart1_full_data = 0;
     logic uart1_data_valid = 0;
 
-    uart_rx #(.BAUD_RATE(9600)) uart1_rx (
+    block_uart_rx #(
+        .BAUD_RATE(9600),
+        .BLOCK_LENGTH(216)
+    ) block_uart1_rx (
         .clk(clk),
         .reset_n(reset_n),
         .data_i(uart1_rx_data),
-        .data_o(uart1_data),
-        .data_valid(uart1_data_valid),
-        .data_count(uart1_data_count)
+        .data_o(uart1_full_data),
+        .data_valid(uart1_data_valid)
     );
-
-    /* UART FULL DATA */
-    logic [215:0] uart_full_data = 0;
-    logic uart_full_data_valid = 0;
-        
-    always_ff @(posedge clk) begin
-        if (!reset_n) begin
-            uart_full_data <= 0;
-            uart_full_data_valid <= 0;
-        end else begin
-            uart_full_data_valid <= 0;
-
-            if (uart1_data_valid) begin
-                uart_full_data <= {uart1_data, uart_full_data[47:8]};
-
-                if (uart1_data_count == 18) begin 
-                    uart_full_data_valid <= 1'b1;
-                end
-            end
-        end
-    end
 
     /* SERVO PWM */
     localparam SERVO_DUTY_0 = 28000;  // ~0.5ms
@@ -58,10 +38,10 @@ module top (
         if (!reset_n) begin
             pwm_duty <= '{default: SERVO_DUTY_90};
         end else begin
-            if (uart_full_data_valid) begin
+            if (uart1_data_valid) begin
                 /* 875 -> 4000 | 28000 >> 5 = 875 | 128000 >> 5 = 4000 */
                 for (int i = 0; i < 18; i++) begin
-                    pwm_duty[i] <= uart_full_data[i*12 +: 12] << 5;
+                    pwm_duty[i] <= uart1_full_data[i*12 +: 12] << 5;
                 end
             end
         end
@@ -90,12 +70,12 @@ module top (
     end
     
     /* LED */
-    assign led_done = uart_full_data[8];
+    assign led_done = button_s1;
     assign led_ready = button_s2;
 
     /* DEBUG */
-    assign debug_a10 = uart1_data_count[0];
-    assign debug_l11 = uart1_data_count[1];
-    assign debug_e10 = uart1_data_count[2];
+    assign debug_a10 = reset_n;
+    assign debug_l11 = reset_n;
+    assign debug_e10 = reset_n;
 
 endmodule
