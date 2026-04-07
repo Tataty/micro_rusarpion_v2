@@ -63,5 +63,6 @@ def main():
     except Exception as e:
         print(f"Виникла помилка: {e}")
 
+# python3 send_fpga_pwm.py /dev/ttyUSB1 -14 900
 if __name__ == "__main__":
     main()
