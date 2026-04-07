@@ -2,6 +2,40 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "CMAKE: configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DBUILD_TESTS=OFF",
+                "-S",
+                "./sbc",
+                "-B",
+                "./sbc/build",
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE: build",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "./sbc/build",
+                "--parallel"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": "CMAKE: configure",
+            "problemMatcher": []
+        },
+        {
             "label": "BUILD: FPGA",
             "type": "shell",
             "command": "/home/rusa/FPGA/TANG25K/Gowin_V1.9.12.02_linux/IDE/bin/gw_sh",

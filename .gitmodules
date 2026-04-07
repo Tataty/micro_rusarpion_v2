@@ -10,3 +10,6 @@
 [submodule "external/termcolor"]
 	path = external/termcolor
 	url = https://github.com/ikalnytskyi/termcolor.git
+[submodule "external/argparse"]
+	path = external/argparse
+	url = https://github.com/p-ranav/argparse.git

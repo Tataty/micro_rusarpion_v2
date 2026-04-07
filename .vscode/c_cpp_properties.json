@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/include",
+                "/usr/local/include",
+                "/usr/include/opencv4",
+                
+                "/usr/include/gstreamer-1.0/",
+                "/usr/include/glib-2.0/",
+                "/usr/lib/x86_64-linux-gnu/glib-2.0/include/",
+
+                "${workspaceFolder}/sbc/build",
+                "${workspaceFolder}/sbc/include",
+                "${workspaceFolder}/sbc/external/sw_common/include",
+
+                "${workspaceFolder}/external/argparse/include",
+                "${workspaceFolder}/external/gtest/googletest/include",
+                "${workspaceFolder}/external/gtest/googlemock/include",
+                "${workspaceFolder}/external/fmt/include",
+                "${workspaceFolder}/external/json/include",
+                "${workspaceFolder}/external/termcolor/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++20",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
