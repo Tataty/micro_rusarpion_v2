@@ -1,4 +1,5 @@
 #pragma once
+
 #include <filesystem>
 #include <thread>
 
@@ -7,7 +8,7 @@
 class FileCamera : public OpenCVCamera {
 public:
     struct Config {
-        iCamera::Config       iCameraConfig;
+        Angle2                angleOfView;
         std::filesystem::path filePath;
     };
 
@@ -16,7 +17,8 @@ private:
     std::chrono::milliseconds frameDelay;
 
 public:
-    FileCamera(const Config& config) : OpenCVCamera(config.iCameraConfig), filePath(config.filePath) {}
+    FileCamera(const std::shared_ptr< iLogger >& logger, const Config& config)
+        : OpenCVCamera(logger, config.angleOfView), filePath(config.filePath) {}
 
     void connect() override {
         std::unique_lock< std::mutex > lock(mutex);
@@ -27,14 +29,32 @@ public:
         }
 
         frameDelay = std::chrono::milliseconds(static_cast< int >(1000 / capture.get(cv::CAP_PROP_FPS)));
+        isConnect  = true;
     };
 
 protected:
-    cv::Mat readMat() override {
+    CameraFrame< CopyMat > _readFrame() override {
         std::this_thread::sleep_for(frameDelay);
 
-        cv::Mat outputImage = OpenCVCamera::readMat();
+        if (!capture.isOpened()) {
+            release();
+            throw std::runtime_error("Camera is not connection");
+        }
 
-        return outputImage;
+        cv::Mat readMat;
+        if (!capture.read(readMat) || readMat.empty()) {
+            capture.set(cv::CAP_PROP_POS_FRAMES, 0);
+
+            if (!capture.read(readMat) || readMat.empty()) {
+                release();
+                throw std::runtime_error("Failed to restart video loop");
+            }
+        }
+
+        return CameraFrame< CopyMat >{
+            .timestamp   = std::chrono::steady_clock::now().time_since_epoch(),
+            .image       = readMat,
+            .angleOfView = iCamera< CopyMat >::angleOfView,
+        };
     }
 };

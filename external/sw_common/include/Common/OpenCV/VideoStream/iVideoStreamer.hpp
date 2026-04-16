@@ -14,13 +14,14 @@ public:
         /* TODO: use HostAddress */
         std::string ip   = "0.0.0.0";
         uint16_t    port = 8554;
+        size_t      bitrate;
+        VideoCodec  videoCodec;
 
-        size_t     bitrate;
-        VideoCodec videoCodec;
+        auto operator<=>(const Config&) const = default;
     };
 
 public:
-    iVideoStreamer(std::shared_ptr< iModuleLogger >& logger) : iActiveModule(logger) {}
+    iVideoStreamer(const std::shared_ptr< iModuleLogger >& logger) : iActiveModule(logger) {}
 
     virtual void pushFrame(const cv::Mat& frame) = 0;
 };

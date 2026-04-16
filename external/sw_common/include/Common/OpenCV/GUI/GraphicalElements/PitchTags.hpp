@@ -10,6 +10,7 @@ struct PitchTags : public iGraphicalElement< cv::Mat > {
 public:
     struct Config {
         Label::Config labelConfig;
+        cv::Scalar    tagColor;
         int           tagWidth;
     };
 
@@ -50,11 +51,7 @@ private:
                               config.labelConfig.textThickness + config.labelConfig.textBorderThickness);
             }
 
-            cv::rectangle(image,
-                          tagLeftPosition,
-                          tagRightPosition,
-                          config.labelConfig.frontColor,
-                          config.labelConfig.textThickness);
+            cv::rectangle(image, tagLeftPosition, tagRightPosition, config.tagColor, config.labelConfig.textThickness);
 
             label.setText(std::to_string(tag.distanceInMeters) + "m");
             label.setPosition(tagRightPosition);
@@ -67,7 +64,7 @@ public:
 
     cv::Size elementSize() override { return cv::Size(config.tagWidth, config.tagWidth); }
 
-    void               setTags(std::vector< Tag > tags) { this->tags = tags; }
+    void               setTags(std::vector< Tag > tags) { this->tags = std::move(tags); }
     std::vector< Tag > getTags() { return tags; }
 };
 

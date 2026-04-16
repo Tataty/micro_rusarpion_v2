@@ -11,7 +11,7 @@ protected:
 
         frame->timestamp   = std::chrono::steady_clock::now().time_since_epoch();
         frame->image       = std::move(image);
-        frame->angleOfView = iCamera< TImage >::parameters.angleOfView;
+        frame->angleOfView = iCamera< TImage >::angleOfView;
 
         frameCallback.notify(std::move(frame));
 
@@ -21,6 +21,6 @@ protected:
 public:
     MultiCallback< CameraFrame< TImage > > frameCallback;
 
-    iPushCamera(const std::shared_ptr< iLogger >& logger, const CameraParameters& parameters)
-        : iCamera< TImage >(logger, parameters), frameCallback(logger) {}
+    iPushCamera(const std::shared_ptr< iLogger >& logger, const Angle2& angleOfView)
+        : iCamera< TImage >(logger, angleOfView), frameCallback(logger) {}
 };

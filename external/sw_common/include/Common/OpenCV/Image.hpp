@@ -1,5 +1,9 @@
 #pragma once
+#include <filesystem>
 #include <opencv2/opencv.hpp>
+
+cv::Mat readImageInMode(const std::filesystem::path& filePath, cv::ImreadModes imreadMode);
+cv::Mat readMask(const std::filesystem::path& maskFilePath);
 
 /**
  * @brief Scales an input image while maintaining its aspect ratio and centering it within a target size.
@@ -17,3 +21,5 @@
 cv::Mat fitImageToSize(const cv::Mat& input_image, const cv::Size& target_size);
 
 cv::Mat zoomImage(const cv::Mat& src, double zoom_factor);
+
+bool isRectInMask(const cv::Rect& rect, const cv::Mat& mask);

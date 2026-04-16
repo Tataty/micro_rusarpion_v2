@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bitset>
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
@@ -60,5 +61,14 @@ inline std::ostream& operator<<(std::ostream& os, HexPrinter hp) {
 }
 
 inline HexPrinter asHex(uint8_t v) { return HexPrinter{ v }; }
+
+/* BINARY */
+struct BinaryPrinter {
+    uint8_t value;
+};
+
+inline std::ostream& operator<<(std::ostream& os, BinaryPrinter bp) { return os << "0b" << std::bitset< 8 >(bp.value); }
+
+inline BinaryPrinter asBinary(uint8_t v) { return BinaryPrinter{ v }; }
 
 }// namespace Print

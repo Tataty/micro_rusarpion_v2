@@ -28,31 +28,17 @@ cv::Scalar hexToScalar(const std::string& hex) {
 
 /* cv::Point */
 std::string   toString(const cv::Point& point) { return fmt::format("({}:{})", point.x, point.y); }
-std::ostream& operator<<(std::ostream& os, const cv::Point& point) {
-    return os << '(' << point.x << ':' << point.y << ')';
-}
-cv::Point operator-(const cv::Point& point) { return cv::Point(-point.x, -point.y); }
+std::ostream& operator<<(std::ostream& os, const cv::Point& point) { return os << '(' << point.x << ':' << point.y << ')'; }
+cv::Point     operator-(const cv::Point& point) { return cv::Point(-point.x, -point.y); }
 
 /* cv::Rect */
 bool   isCollisionRect(const cv::Rect& a, const cv::Rect& b) { return (a & b).area() > 0; }
 double innerRadiusRect(const cv::Rect& rect) { return std::min(rect.width, rect.height) / 2; }
 
-cv::Rect expandRect(const cv::Rect& rect, int expand) {
-    return cv::Rect(rect.x - expand, rect.y - expand, rect.width + expand * 2, rect.height + expand * 2);
-}
-cv::Rect expandRect(const cv::Rect& rect, cv::Size expand) {
-    return cv::Rect(rect.x - expand.width,
-                    rect.y - expand.height,
-                    rect.width + expand.width * 2,
-                    rect.height + expand.height * 2);
-}
-cv::Rect expandRect(const cv::Size& sizeRect, int expand) {
-    return cv::Rect(-expand, -expand, sizeRect.width + expand * 2, sizeRect.height + expand * 2);
-}
-cv::Rect expandRect(const cv::Size& sizeRect, cv::Size expand) {
-    return cv::Rect(
-            -expand.width, -expand.height, sizeRect.width + expand.width * 2, sizeRect.height + expand.height * 2);
-}
+cv::Rect expandRect(const cv::Rect& rect, int expand) { return cv::Rect(rect.x - expand, rect.y - expand, rect.width + expand * 2, rect.height + expand * 2); }
+cv::Rect expandRect(const cv::Rect& rect, cv::Size expand) { return cv::Rect(rect.x - expand.width, rect.y - expand.height, rect.width + expand.width * 2, rect.height + expand.height * 2); }
+cv::Rect expandRect(const cv::Size& sizeRect, int expand) { return cv::Rect(-expand, -expand, sizeRect.width + expand * 2, sizeRect.height + expand * 2); }
+cv::Rect expandRect(const cv::Size& sizeRect, cv::Size expand) { return cv::Rect(-expand.width, -expand.height, sizeRect.width + expand.width * 2, sizeRect.height + expand.height * 2); }
 
 cv::Rect clampRect(const cv::Rect& inner, const cv::Rect& outer) { return inner & outer; }
 void     fitInside(cv::Rect& smaller, const cv::Rect& larger) {
@@ -77,9 +63,7 @@ cv::Size imageSize(const cv::Mat& image) { return cv::Size(image.cols, image.row
 
 cv::Mat makeZeroMatBGR(cv::Size size) { return cv::Mat::zeros(size.height, size.width, CV_8UC3); }
 
-cv::Mat makeZeroMatYUV_I420(cv::Size size) {
-    return cv::Mat::zeros(size.height + (size.height / 2), size.width, CV_8UC1);
-}
+cv::Mat makeZeroMatYUV_I420(cv::Size size) { return cv::Mat::zeros(size.height + (size.height / 2), size.width, CV_8UC1); }
 
 bool areMatsEqual(const cv::Mat& a, const cv::Mat& b) {
     if (a.size() != b.size() || a.type() != b.type()) {

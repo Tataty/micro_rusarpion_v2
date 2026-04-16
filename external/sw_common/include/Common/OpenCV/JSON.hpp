@@ -1,6 +1,5 @@
 #pragma once
 #include "nlohmann/json.hpp"
-using json = nlohmann::json;
 
 #include "Common/OpenCV/Common.hpp"
 
@@ -29,6 +28,6 @@ template < typename T > void from_json(const nlohmann::json& j, Rect_< T >& r) {
     j.at("height").get_to(r.height);
 }
 
-inline void from_json(const json& j, cv::Scalar& s) { s = hexToScalar(j.get< std::string >()); }
+inline void from_json(const nlohmann::json& j, cv::Scalar& s) { s = hexToScalar(j.get< std::string >()); }
 
 }// namespace cv

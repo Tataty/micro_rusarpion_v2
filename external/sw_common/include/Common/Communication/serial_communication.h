@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
+#include <stdexcept>
 
 #include "Common/Communication/i_communication.h"
 

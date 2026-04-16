@@ -22,7 +22,7 @@ public:
     static constexpr std::array< CameraFormat, 2 > SUPPORT_CAMERA_FORMAT{ CameraFormat::MJPG, CameraFormat::YUYV };
 
     struct Config {
-        CameraParameters                   cameraParameters;
+        Angle2                             angleOfView;
         std::string                        device;
         std::optional< CameraRequirement > requirement;
     };
@@ -74,7 +74,7 @@ private:
 
 public:
     USBCamera(const std::shared_ptr< iLogger >& logger, const Config& config)
-        : OpenCVCamera(logger, config.cameraParameters) {
+        : OpenCVCamera(logger, config.angleOfView) {
         if (config.requirement.has_value()) {
             pipeline = buildPipelineByCameraRequirement(config.device, config.requirement.value());
         } else {
@@ -86,14 +86,16 @@ public:
         std::unique_lock< std::mutex > lock(mutex);
 
         if (!capture.open(pipeline, cv::CAP_GSTREAMER)) {
-            capture.release();
+            release();
             throw std::runtime_error("Could not open camera pipeline: " + pipeline);
         }
 
         cv::Mat tempFrame;
         if (!capture.read(tempFrame)) {
-            capture.release();
+            release();
             throw std::runtime_error("Camera read timeout after init");
         }
+
+        isConnect = true;
     };
 };

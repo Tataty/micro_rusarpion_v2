@@ -11,6 +11,8 @@ public:
     struct Config {
         iVideoStreamer::Config       streamer;
         std::optional< std::string > alsaMicrophone;
+
+        auto operator<=>(const Config&) const = default;
     };
 
 private:
@@ -32,20 +34,15 @@ private:
         // TODO: implementation fluent-builder
         case VideoCodec::MJPEG:
             ffmpegStreamerConfig.pipeline = fmt::format(
-                    "ffmpeg -nostdin -f rawvideo -pixel_format yuv420p -video_size {resolution} -framerate {fps} -i - {alsa_device} -fflags nobuffer -c:v mjpeg -q:v 5 -huffman 0 -force_duplicated_matrix 1 -muxdelay 0 -muxpreload 0 -b:v {bitrate} -maxrate {maxrate} -bufsize {bufsize} {alsa_format} -f rtsp {stream_link}",
+                    "ffmpeg -loglevel quiet -nostdin -f rawvideo -pixel_format yuvj420p -video_size {resolution} -framerate {fps} -i - -vf scale=out_color_matrix=bt601:out_range=pc -pix_fmt yuv420p -fflags nobuffer -c:v mjpeg -q:v 5 -huffman 0 -force_duplicated_matrix 1 -muxdelay 0 -muxpreload 0 -rtsp_transport tcp -pkt_size 1400 -f rtsp {stream_link}",
                     fmt::arg("resolution", toString(config.streamer.resolution)),
                     fmt::arg("fps", config.streamer.fps),
-                    fmt::arg("alsa_device", alsaInputDevice),
-                    fmt::arg("bitrate", config.streamer.bitrate),
-                    fmt::arg("maxrate", config.streamer.bitrate),
-                    fmt::arg("bufsize", config.streamer.bitrate / 2),
-                    fmt::arg("alsa_format", alsaFormat),
                     fmt::arg("stream_link", buildStreamLink(config)));
             break;
 
         case VideoCodec::H265:
             ffmpegStreamerConfig.pipeline = fmt::format(
-                    "ffmpeg -nostdin -f rawvideo -pixel_format yuv420p -video_size {resolution} -framerate {fps} -i - {alsa_device} -fflags nobuffer -flags low_delay -c:v libx265 -preset veryfast -tune zerolatency -muxdelay 0 -muxpreload 0 -b:v {bitrate} -maxrate {maxrate} -bufsize {bufsize} {alsa_format} -f rtsp {stream_link}",
+                    "ffmpeg -loglevel quiet -nostdin -f rawvideo -pixel_format yuv420p -video_size {resolution} -framerate {fps} -i - {alsa_device} -fflags nobuffer -flags low_delay -c:v libx265 -preset ultrafast -tune zerolatency -muxdelay 0 -muxpreload 0 -b:v {bitrate} -maxrate {maxrate} -bufsize {bufsize} {alsa_format} -f rtsp {stream_link}",
                     fmt::arg("resolution", toString(config.streamer.resolution)),
                     fmt::arg("fps", config.streamer.fps),
                     fmt::arg("alsa_device", alsaInputDevice),
@@ -59,7 +56,7 @@ private:
         case VideoCodec::H264:
         default:
             ffmpegStreamerConfig.pipeline = fmt::format(
-                    "ffmpeg -nostdin -f rawvideo -pixel_format yuv420p -video_size {resolution} -framerate {fps} -i - {alsa_device} -fflags nobuffer -flags low_delay -c:v libx264 -preset veryfast -tune zerolatency -muxdelay 0 -muxpreload 0 -b:v {bitrate} -maxrate {maxrate} -bufsize {bufsize} {alsa_format} -f rtsp {stream_link}",
+                    "ffmpeg -loglevel quiet -nostdin -f rawvideo -pixel_format yuv420p -video_size {resolution} -framerate {fps} -i - {alsa_device} -fflags nobuffer -flags low_delay -c:v libx264 -preset ultrafast -tune zerolatency -muxdelay 0 -muxpreload 0 -b:v {bitrate} -maxrate {maxrate} -bufsize {bufsize} {alsa_format} -f rtsp {stream_link}",
                     fmt::arg("resolution", toString(config.streamer.resolution)),
                     fmt::arg("fps", config.streamer.fps),
                     fmt::arg("alsa_device", alsaInputDevice),
@@ -70,12 +67,11 @@ private:
                     fmt::arg("stream_link", buildStreamLink(config)));
             break;
         }
-
         return ffmpegStreamerConfig;
     }
 
 public:
-    RTSPFFmpegStreamer(std::shared_ptr< iModuleLogger >& logger, Config config)
+    RTSPFFmpegStreamer(const std::shared_ptr< iModuleLogger >& logger, const Config& config)
         : PipeVideoStreamer(logger, buildFFmpegStreamerConfig(config)) {}
 
 private:

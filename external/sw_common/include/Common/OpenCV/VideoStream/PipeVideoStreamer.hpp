@@ -14,8 +14,8 @@ public:
     };
 
 private:
-    std::mutex mutex;
-    Config     config;
+    std::mutex   mutex;
+    const Config config;
 
     MatPipeWriter matPipeWriter;
     cv::Mat       yuvFrame;
@@ -23,7 +23,7 @@ private:
     std::condition_variable readyCondition;
 
 public:
-    PipeVideoStreamer(std::shared_ptr< iModuleLogger >& logger, Config config)
+    PipeVideoStreamer(const std::shared_ptr< iModuleLogger >& logger, const Config& config)
         : iVideoStreamer(logger), config(config) {}
     ~PipeVideoStreamer() { kill(); }
 
@@ -53,7 +53,7 @@ protected:
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    std::chrono::milliseconds action() override {
+    std::chrono::duration< double > action() override {
         std::unique_lock< std::mutex > lock(mutex);
 
         readyCondition.wait(lock, [this]() {

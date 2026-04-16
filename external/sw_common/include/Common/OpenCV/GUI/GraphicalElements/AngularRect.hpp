@@ -3,7 +3,7 @@
 
 namespace gui {
 
-struct AngularRect : public iGraphicalElement<cv::Mat> {
+struct AngularRect : public iGraphicalElement< cv::Mat > {
 public:
     struct Config {
         cv::Size halfSize;
@@ -12,7 +12,7 @@ public:
         int        lineThickness;
         cv::Scalar frontColor;
 
-        int        borderThickness;
+        int        borderThickness = 0;
         cv::Scalar backColor;
     };
 
@@ -83,6 +83,11 @@ public:
     AngularRect(Config config) : config(config) {}
 
     cv::Size elementSize() override { return cv::Size(config.halfSize.width * 2, config.halfSize.height * 2); }
+
+    void     setHalfSize(cv::Size size) { config.halfSize = size; }
+    cv::Size getHalfSize() { return config.halfSize; }
+
+    void setFrontColor(cv::Scalar color) { config.frontColor = color; }
 };
 
 }// namespace gui

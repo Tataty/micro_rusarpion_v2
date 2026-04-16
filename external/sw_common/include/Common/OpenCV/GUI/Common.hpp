@@ -1,7 +1,6 @@
 #pragma once
 #include <opencv2/opencv.hpp>
 
-// TODO: add gui namespace or move to Align
 /* cv::Size */
 cv::Point topRight(const cv::Size& size);
 cv::Point topLeft(const cv::Size& size [[maybe_unused]]);

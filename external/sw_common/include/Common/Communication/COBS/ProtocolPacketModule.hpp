@@ -23,6 +23,10 @@
 #include "Common/Module/iModule.hpp"
 
 template < typename TPacket > class ProtocolPacketModule : iModule {
+private:
+    static constexpr int EXTRA_COBS_SIZE     = 2;
+    static constexpr int EXTRA_PROTOCOL_SIZE = 6;
+
 public:
     using TypePacket = TPacket;
 
@@ -32,9 +36,6 @@ public:
     };
 
 private:
-    const int EXTRA_COBS_SIZE     = 1;
-    const int EXTRA_PROTOCOL_SIZE = 6;
-
     protocol_packet_t protocol;
     TPacket           packet;
 
@@ -42,8 +43,8 @@ public:
     MultiCallback< TPacket > callbackUpdate;
 
 public:
-    ProtocolPacketModule(std::shared_ptr< iModuleLogger >& logger, Config config)
-        : iModule(logger), packet{}, callbackUpdate(this->logger) {
+    ProtocolPacketModule(std::shared_ptr< iModuleLogger >& logger, const Config& config)
+        : iModule(logger), packet{}, callbackUpdate(logger) {
         protocol.type     = config.type;
         protocol.addr     = config.addr;
         protocol.data_len = sizeof(TPacket);
@@ -83,8 +84,8 @@ public:
         return false;
     }
 
-    void setPacket(const TPacket& packet) {
-        this->packet = packet;
+    void setPacket(TPacket packet) {
+        this->packet = std::move(packet);
         callbackUpdate.notify(std::make_unique< TPacket >(packet));
     }
     const TPacket getPacket() const { return packet; }

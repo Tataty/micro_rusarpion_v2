@@ -29,7 +29,14 @@ public:
     }
     ~PushCameraActiveModule() override { this->kill(); }
 
-    bool isConnection() { return camera->isConnection(); }
+    bool isConnection() override { return camera->isConnection(); }
+
+    bool isParameter(std::string_view key) const override { return camera->isParameter(key); }
+    const iCamera< TImage >::Parameter getParameter(std::string_view key) const override {
+        return camera->getParameter(key);
+    }
+    void         setParameter(std::string_view key, double value) override { camera->setParameter(key, value); }
+    const Angle2 getAngleOfView() const override { return camera->getAngleOfView(); }
 
 protected:
     void stop() override {

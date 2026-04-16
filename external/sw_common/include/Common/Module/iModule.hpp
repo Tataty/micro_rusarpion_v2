@@ -15,14 +15,14 @@
 
 class iModule {
 protected:
-    std::shared_ptr< iModuleLogger > logger;
-    std::atomic< bool >              isInit;
+    const std::shared_ptr< iModuleLogger > logger;
+    std::atomic< bool >                    isInit;
 
     virtual void init() {}
     virtual void stop() {}
 
 public:
-    iModule(std::shared_ptr< iModuleLogger >& logger) : logger(std::move(logger)) {}
+    iModule(const std::shared_ptr< iModuleLogger >& logger) : logger(logger) {}
 
     virtual void run() {
         if (isInit)

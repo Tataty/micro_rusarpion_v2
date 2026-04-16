@@ -1,8 +1,8 @@
 #pragma once
 #include <opencv2/opencv.hpp>
 
+#include "Common/OpenCV/Common.hpp"
 #include "Common/Type/Angle.hpp"
-#include "Common/OpenCV/Math.hpp"
 
 struct PolarPoint3d {
     Angle2 angles;
@@ -16,7 +16,7 @@ struct PolarPoint3d {
                 .yaw   = Angle::fromRadians(std::atan2(point.z, point.x)),
                 .pitch = Angle::fromRadians(std::atan2(point.y, horizontal_distance)),
             },
-            .distance = magnitude(point),
+            .distance = cv::magnitude(point),
         };
 
         return polarPoint;

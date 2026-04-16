@@ -12,14 +12,14 @@ struct LinkFromTo {
     std::string to;
 };
 
-void from_json(const json& j, LinkFromTo& l) {
+void from_json(const nlohmann::json& j, LinkFromTo& l) {
     j.at("from").get_to(l.from);
     j.at("to").get_to(l.to);
 }
 
 std::string getLinkView(const std::string& s) { return "{" + s + "}"; }
 
-json getJSONWithLinks(const json& jsonData) {
+nlohmann::json getJSONWithLinks(const nlohmann::json& jsonData) {
 
     std::string jsonText = jsonData.dump(4);
 
@@ -34,13 +34,13 @@ json getJSONWithLinks(const json& jsonData) {
         }
     }
 
-    return json::parse(jsonText);
+    return nlohmann::json::parse(jsonText);
 }
 
-json readJSONFileWithLinks(const std::filesystem::path& filePath) {
+nlohmann::json readJSONFileWithLinks(const std::filesystem::path& filePath) {
 
-    std::string fileText = readFileAsText(filePath);
-    json        jsonData = json::parse(fileText);
+    std::string    fileText = readFileAsText(filePath);
+    nlohmann::json jsonData = nlohmann::json::parse(fileText);
 
     std::vector< LinkFromTo > links = jsonData.at("links");
 
@@ -53,5 +53,5 @@ json readJSONFileWithLinks(const std::filesystem::path& filePath) {
         }
     }
 
-    return json::parse(fileText);
+    return nlohmann::json::parse(fileText);
 }

@@ -10,6 +10,7 @@ public:
     struct Color {
         cv::Scalar primary;
         cv::Scalar secondary;
+        cv::Scalar auxiliary;
 
         cv::Scalar enabled;
         cv::Scalar disabled;

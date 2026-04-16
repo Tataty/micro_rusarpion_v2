@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <opencv2/opencv.hpp>
+#include "Common/OpenCV/Common.hpp"
 
 #include "Common/Module/Callback/MultiCallback.hpp"
 #include "Common/Module/iModule.hpp"
@@ -18,19 +18,22 @@ class DesktopModule : public iModule {
 public:
     struct Config {
         std::string title;
-        bool        isFullScreen;
+        bool        isFullScreen = false;
     };
 
 private:
     const Config config;
 
+    std::optional< cv::Size > lastImageSize;
+
 public:
     /* Left mouse click position */
-    MultiCallback< cv::Point > callbackClick;
-    MultiCallback< char >      callbackKey;
+    MultiCallback< cv::Point2d > normClickCallback;
+    MultiCallback< cv::Point >   clickCallback;
+    MultiCallback< char >        keyCallback;
 
-    DesktopModule(std::shared_ptr< iModuleLogger >& logger, const Config& config)
-        : iModule(logger), config(config), callbackClick(this->logger), callbackKey(this->logger) {
+    DesktopModule(const std::shared_ptr< iModuleLogger >& logger, const Config& config)
+        : iModule(logger), config(config), normClickCallback(logger), clickCallback(logger), keyCallback(logger) {
 
         if (config.isFullScreen) {
             cv::namedWindow(config.title, cv::WINDOW_NORMAL);
@@ -43,13 +46,15 @@ public:
     }
 
     /* Displays the image on the screen */
-    void pushFrame(const cv::Mat& image) {
+    void pushImage(const cv::Mat& image) {
         cv::imshow(config.title, image);
+
+        lastImageSize = imageSize(image);
 
         std::unique_ptr< char > key = std::make_unique< char >(cv::waitKey(1));
 
         if (*key > 0)
-            callbackKey.notify(std::move(key));
+            keyCallback.notify(std::move(key));
     }
 
 private:
@@ -57,7 +62,20 @@ private:
     static void onMouse(int event, int x, int y, int flags, void* userdata) {
         DesktopModule* selfDesktopModule = static_cast< DesktopModule* >(userdata);
 
-        if (event == cv::EVENT_LBUTTONDOWN)
-            selfDesktopModule->callbackClick.notify(std::make_unique< cv::Point >(cv::Point(x, y)));
+        if (event == cv::EVENT_LBUTTONDOWN) {
+            auto clickPoint = std::make_unique< cv::Point >(x, y);
+
+            if (selfDesktopModule->lastImageSize.has_value()) {
+                auto normClickPoint = std::make_unique< cv::Point2d >();
+                normClickPoint->x =
+                        static_cast< double >(clickPoint->x) / selfDesktopModule->lastImageSize.value().width;
+                normClickPoint->y =
+                        static_cast< double >(clickPoint->y) / selfDesktopModule->lastImageSize.value().height;
+
+                selfDesktopModule->normClickCallback.notify(std::move(normClickPoint));
+            }
+
+            selfDesktopModule->clickCallback.notify(std::move(clickPoint));
+        }
     }
 };

@@ -2,6 +2,7 @@
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
+#include "Common/JSON/Chrono.hpp"
 #include "Common/Module/Callback/MultiCallback.hpp"
 #include "Common/Module/DConfig.hpp"
 #include "Common/Module/iActiveModule.hpp"
@@ -10,20 +11,18 @@ using json = nlohmann::json;
 template < typename TData > class DataRateStabilizerModule : public iActiveModule {
 public:
     struct Config {
-        std::chrono::milliseconds dataPeriod;
+        std::chrono::duration< double > dataPeriod;
 
         auto operator<=>(const Config&) const = default;
 
-        friend void from_json(const nlohmann::json& j, Config& c) {
-            c.dataPeriod = std::chrono::milliseconds{ j.at("dataPeriod").get< int64_t >() };
-        }
+        friend void from_json(const nlohmann::json& j, Config& c) { j.at("dataPeriod").get_to(c.dataPeriod); }
     };
 
 private:
     std::mutex mutex;
 
-    std::unique_ptr< TData > bufferedLatestData;
-    std::condition_variable  isDataCondition;
+    std::shared_ptr< const TData > bufferedLatestData;
+    std::condition_variable        isDataCondition;
 
     std::unique_ptr< DelayStabilizer > frameDelayStabilizer;
 
@@ -41,10 +40,10 @@ public:
           config(config, std::bind(&DataRateStabilizerModule< TData >::onConfigChanged, this)) {}
     ~DataRateStabilizerModule() override { kill(); }
 
-    void pushData(std::unique_ptr< TData > callbackFrameData) {
+    void pushData(std::shared_ptr< const TData > data) {
         std::lock_guard< std::mutex > lock(mutex);
 
-        bufferedLatestData = std::move(callbackFrameData);
+        bufferedLatestData = data;
         isDataCondition.notify_all();
     }
 

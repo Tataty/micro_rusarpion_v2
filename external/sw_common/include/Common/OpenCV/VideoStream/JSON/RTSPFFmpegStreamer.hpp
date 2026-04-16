@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Common/OpenCV/VideoStream/JSON/VideoCodec.hpp"
 #include "Common/OpenCV/VideoStream/JSON/iVideoStreamer.hpp"
 #include "Common/OpenCV/VideoStream/RTSPFFmpegStreamer.hpp"
 

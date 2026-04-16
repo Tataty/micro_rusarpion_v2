@@ -17,6 +17,8 @@ protected:
     const std::shared_ptr< iLogger > logger;
     const TCallbackFunction          callbackFunction;
 
+    /* TODO:2 add apsLogger to callbackFunction */
+
     void sendDataToCallbackFunction(TDataPtr& data) {
         try {
             callbackFunction(std::move(data));

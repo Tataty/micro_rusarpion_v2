@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+#include <cctype>
 #include <codecvt>
 #include <cwctype>
 #include <iomanip>
@@ -11,7 +13,9 @@
 std::u16string utf8To16(const std::string& utf8);
 std::string    utf16To8(const std::u16string& utf16);
 
-std::string    toLower(const std::string& text);
+std::string toLower(const std::string& text);
+
+std::string    toUpper(const std::string& text);
 std::u16string toUpper(const std::u16string& text);
 
 std::string    addSpacesAfterLetters(const std::string& text);

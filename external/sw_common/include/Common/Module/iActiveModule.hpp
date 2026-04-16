@@ -21,14 +21,12 @@ class iActiveModule : protected iModule {
 private:
     static constexpr std::chrono::milliseconds REINIT_DELAY = 1000ms;
 
-    std::mutex mutex;
-
-    std::thread         workThread;
-
-    ApsLogger apsLogger;
+    std::mutex  mutex;
+    std::thread workThread;
+    ApsLogger   apsLogger;
 
 public:
-    iActiveModule(std::shared_ptr< iModuleLogger >& logger) : iModule(logger), apsLogger(this->logger) {
+    iActiveModule(const std::shared_ptr< iModuleLogger >& logger) : iModule(logger), apsLogger(this->logger) {
         isInit.store(false);
     }
 

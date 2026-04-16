@@ -1,7 +1,7 @@
 #pragma once
 #include <opencv2/opencv.hpp>
 
-#include "Common/OpenCV/Math.hpp"
+#include "Common/OpenCV/Common.hpp"
 #include "Common/Type/Angle.hpp"
 
 struct PolarPoint2d {
@@ -11,7 +11,7 @@ struct PolarPoint2d {
     static inline PolarPoint2d fromCartesian(const cv::Point2d& point) {
         PolarPoint2d polarPoint = {
             .angle    = Angle::fromRadians(std::atan2(point.y, point.x)),
-            .distance = magnitude(point),
+            .distance = cv::magnitude(point),
         };
 
         return polarPoint;

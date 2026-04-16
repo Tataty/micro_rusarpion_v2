@@ -11,10 +11,10 @@ public:
         int        lineThickness;
         cv::Scalar frontColor;
 
+        bool isCenterPoint = false;
+
         int        borderThickness;
         cv::Scalar backColor;
-
-        bool isCenterPoint = false;
     };
 
 private:
@@ -63,6 +63,8 @@ private:
 
 public:
     Plus(Config config) : config(config) {}
+
+    void setFrontColor(cv::Scalar color) { config.frontColor = color; }
 
     cv::Size elementSize() override {
         return cv::Size(config.radius * 2 + config.borderThickness + config.lineThickness,

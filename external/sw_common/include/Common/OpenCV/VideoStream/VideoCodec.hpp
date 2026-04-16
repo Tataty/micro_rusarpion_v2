@@ -1,4 +1,5 @@
 #pragma once
+#include "Common/Text.hpp"
 
 enum class VideoCodec {
     MJPEG,
@@ -7,8 +8,7 @@ enum class VideoCodec {
 };
 
 inline void fromString(VideoCodec& videoCodec, const std::string& str) {
-    std::string upperStr = str;
-    std::transform(upperStr.begin(), upperStr.end(), upperStr.begin(), ::toupper);
+    std::string upperStr = toUpper(str);
 
     if (upperStr == "MJPEG") {
         videoCodec = VideoCodec::MJPEG;
@@ -16,5 +16,7 @@ inline void fromString(VideoCodec& videoCodec, const std::string& str) {
         videoCodec = VideoCodec::H264;
     } else if (upperStr == "H265") {
         videoCodec = VideoCodec::H265;
+    } else {
+        throw std::runtime_error("VideoCodec not found: " + str);
     }
 }

@@ -8,7 +8,8 @@ namespace gui {
 struct BorderRadius : public iGraphicalElement< cv::Mat > {
 public:
     struct Config {
-        int borderRadius = 0;
+        int                         borderRadius = 0;
+        std::optional< cv::Scalar > color;
     };
 
 private:
@@ -17,6 +18,10 @@ private:
     void drawElement(cv::Mat& image, cv::Rect busyRect) override {
         interElement->setPosition(center(busyRect));
         interElement->setAlignment(Align::Center);
+
+        if (config.color.has_value()) {
+            cv::rectangle(image, busyRect, config.color.value(), cv::FILLED);
+        }
 
         interElement->draw(image);
     }

@@ -13,28 +13,31 @@
 class NetCamera : public OpenCVCamera {
 public:
     struct Config {
-        iCamera::Config iCameraConfig;
-        std::string     netSourceLink;
+        Angle2      angleOfView;
+        std::string netSourceLink;
     };
 
 private:
     std::string netSourceLink;
 
 public:
-    NetCamera(const Config& config) : OpenCVCamera(config.iCameraConfig), netSourceLink(config.netSourceLink) {}
+    NetCamera(const std::shared_ptr< iLogger >& logger, const Config& config)
+        : OpenCVCamera(logger, config.angleOfView), netSourceLink(config.netSourceLink) {}
 
     void connect() override {
         std::unique_lock< std::mutex > lock(mutex);
 
         if (!capture.open(netSourceLink)) {
-            capture.release();
+            release();
             throw std::runtime_error("Could not open camera network link: " + netSourceLink);
         }
 
         cv::Mat temp_image;
         if (!capture.read(temp_image)) {
-            capture.release();
+            release();
             throw std::runtime_error("Camera read timeout after init");
         }
+
+        isConnect = true;
     };
 };
